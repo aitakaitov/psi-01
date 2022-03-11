@@ -1,4 +1,3 @@
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -10,13 +9,24 @@
 
 int main(int argc, char *argv[])
 {
-    if (argc != 3) {
-        printf("Usage: <multicast group> <port>\n");
+    char* group;
+    int port;
+    if (argc == 1) {
+        group = "239.255.255.250";
+        port = 1900;
+        printf("No group or ports provided, using defaults (addr: %s, port: %d)\n", group, port);
+    }
+    else if (argc == 3) {
+        group = argv[1];
+        port = atoi(argv[2]);
+    }
+    else {
+        printf("Usage: udp_multicast_server <multicast group> <port>\n");
+        printf("or\n");
+        printf("udp_multicast_server (this uses defaults)\n");
         return 1;
     }
 
-    char* group = argv[1];
-    int port = atoi(argv[2]);
     const char *message = "This is a UDP multicast message!";
     const int delay_secs = 5;
 
@@ -52,6 +62,6 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        sleep(delay_secs); // Unix sleep is seconds
+        sleep(delay_secs);
     }
 }
